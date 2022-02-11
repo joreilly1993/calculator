@@ -11,21 +11,25 @@
 <body>
       <div id="calculator">
       
-        <div id="display">
-              <div previous-input>123</div>
-              <div current-input>456</div>
+        <div id="inputDisplay">
+              <div id="firstInput"></div>
+              <div id="operatorInput"></div>
+              <div id="secondInput"></div>
+        </div>
+        <div id="lower-display">
+              <div id="answer"></div>
         </div>
         
           <div id="buttons">
             <div id="allclearcleardeletecontainer">
-              <div id="all-clear">
-                  <button class="all-clear-button" id="all-clear-btn">AC</button>
+              <div id="clear">
+                  <button class="clearBtn" id="clearBtn">AC</button>
               </div>
               <div id="clear">
-              <button class="clear-button" id="clear-btn">C</button>
+              <button class="del-button" id="delBtn">Del</button>
               </div>
               <div id="equals">
-                <button class="equals-button" id="equals-btn">=</button>
+                <button class="equals-button" id="equalsBtn">=</button>
               </div>
             </div>
             <div id="seveneightninedividecontainer">
@@ -71,14 +75,14 @@
               </div>
             </div>
             <div id="zerodecimalequalspluscontainer">
-              <div id="zero">
-              <button class="buttons" id="decimal-btn">.</button>
-              </div>
               <div id="decimal">
+              <button class="buttons" id="decimalBtn">.</button>
+              </div>
+              <div id="zero">
               <button class="buttons" data-number>0</button>
               </div>
               <div id="percentage">
-                <button class="buttons" id="percentage-btn">%</button>
+                <button class="buttons" id="percentageBtn">%</button>
                 </div>
               <div id="plus">
               <button class="buttons" data-operator>+</button>

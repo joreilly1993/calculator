@@ -1,108 +1,76 @@
-let firstOperand = ''
-let secondOperand = ''
-let currentOperation = null
-let shouldResetScreen = false
-
 const numberButtons = document.querySelectorAll('[data-number]')
 const operatorButtons = document.querySelectorAll('[data-operator]')
-const equalsButton = document.getElementById('equalsBtn')
-const clearButton = document.getElementById('clearBtn')
-const deleteButton = document.getElementById('deleteBtn')
-const pointButton = document.getElementById('pointBtn')
-const lastOperationScreen = document.getElementById('lastOperationScreen')
-const currentOperationScreen = document.getElementById('currentOperationScreen')
+const equalsButton = document.querySelector('#equalsBtn')
+const clearButton = document.querySelector('#clearBtn')
+const deleteButton = document.querySelector('#delBtn')
+const decimalButton = document.querySelector('#decimalBtn')
+const percentageButton = document.querySelector('#percentageBtn');
+const firstInput = document.querySelector('#firstInput');
+const operatorInput = document.querySelector('#operatorInput');
+const secondInput = document.querySelector('#secondInput');
+const answer = document.querySelector('#answer');
 
-window.addEventListener('keydown', handleKeyboardInput)
-equalsButton.addEventListener('click', evaluate)
-clearButton.addEventListener('click', clear)
-deleteButton.addEventListener('click', deleteNumber)
-pointButton.addEventListener('click', appendPoint)
+numberButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      if(operatorInput.textContent === ''){
+        firstInput.textContent += button.textContent;
+      } else if(operatorInput.textContent !== '') {
+        secondInput.textContent += button.textContent;
+      };
+    });
+});
 
-numberButtons.forEach((button) =>
-  button.addEventListener('click', () => appendNumber(button.textContent))
-)
+operatorButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      operatorInput.textContent = button.textContent;
+    });
+});
 
-operatorButtons.forEach((button) =>
-  button.addEventListener('click', () => setOperation(button.textContent))
-)
-
-function appendNumber(number) {
-  if (currentOperationScreen.textContent === '0' || shouldResetScreen)
-    resetScreen()
-  currentOperationScreen.textContent += number
-}
-
-function resetScreen() {
-  currentOperationScreen.textContent = ''
-  shouldResetScreen = false
-}
-
-function clear() {
-  currentOperationScreen.textContent = '0'
-  lastOperationScreen.textContent = ''
-  firstOperand = ''
-  secondOperand = ''
-  currentOperation = null
-}
-
-function appendPoint() {
-  if (shouldResetScreen) resetScreen()
-  if (currentOperationScreen.textContent === '')
-    currentOperationScreen.textContent = '0'
-  if (currentOperationScreen.textContent.includes('.')) return
-  currentOperationScreen.textContent += '.'
-}
-
-function deleteNumber() {
-  currentOperationScreen.textContent = currentOperationScreen.textContent
-    .toString()
-    .slice(0, -1)
-}
-
-function setOperation(operator) {
-  if (currentOperation !== null) evaluate()
-  firstOperand = currentOperationScreen.textContent
-  currentOperation = operator
-  lastOperationScreen.textContent = `${firstOperand} ${currentOperation}`
-  shouldResetScreen = true
-}
-
-function evaluate() {
-  if (currentOperation === null || shouldResetScreen) return
-  if (currentOperation === '÷' && currentOperationScreen.textContent === '0') {
-    alert("You can't divide by 0!")
-    return
+equalsButton.addEventListener('click', () => {
+  if(operatorInput.textContent === '/' && secondInput.textContent === '0') {
+    answer.textContent = 'Can\'t divide by zero!'
+  } else {
+    answer.textContent = operate(operatorInput.textContent, firstInput.textContent, secondInput.textContent)
   }
-  secondOperand = currentOperationScreen.textContent
-  currentOperationScreen.textContent = roundResult(
-    operate(currentOperation, firstOperand, secondOperand)
-  )
-  lastOperationScreen.textContent = `${firstOperand} ${currentOperation} ${secondOperand} =`
-  currentOperation = null
-}
+})
 
-function roundResult(number) {
-  return Math.round(number * 1000) / 1000
-}
+clearButton.addEventListener('click', () => {
+  firstInput.textContent = '';
+  secondInput.textContent = '';
+  operatorInput.textContent = '';
+  answer.textContent = '';
+})
 
-function handleKeyboardInput(e) {
-  if (e.key >= 0 && e.key <= 9) appendNumber(e.key)
-  if (e.key === '.') appendPoint()
-  if (e.key === '=' || e.key === 'Enter') evaluate()
-  if (e.key === 'Backspace') deleteNumber()
-  if (e.key === 'Escape') clear()
-  if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/')
-    setOperation(convertOperator(e.key))
-}
+deleteButton.addEventListener('click', () => {
+  if(secondInput.textContent !== ''){
+    secondInput.textContent = secondInput.textContent.slice(0, -1);
+  } else if(secondInput.textContent === '' && operatorInput.textContent !== ''){
+    operatorInput.textContent = '';
+  } else if(operatorInput.textContent === ''){
+    firstInput.textContent = firstInput.textContent.slice(0, -1);
+  }
+})
 
-function convertOperator(keyboardOperator) {
-  if (keyboardOperator === '/') return '÷'
-  if (keyboardOperator === '*') return '×'
-  if (keyboardOperator === '-') return '−'
-  if (keyboardOperator === '+') return '+'
-}
+decimalButton.addEventListener('click', () => {
+if(operatorInput.textContent === '' && !firstInput.textContent.includes('.')){
+    firstInput.textContent = firstInput.textContent += '.';
+  }
+  else if(operatorInput.textContent !== '' && !secondInput.textContent.includes('.')){
+    secondInput.textContent = secondInput.textContent += '.';
+  }
+})
 
-function add(a, b) {
+percentageButton.addEventListener('click', () => {
+  if(firstInput.textContent !== '' && secondInput.textContent === ''){
+    firstInput.textContent = firstInput.textContent * .01;
+  } else if(secondInput.textContent !== '' && answer.textContent === '') {
+    secondInput.textContent = secondInput.textContent * .01;
+  } else if(answer.textContent !== '') {
+    answer.textContent = answer.textContent * .01;
+  }
+})
+
+  function add(a, b) {
   return a + b
 }
 
@@ -124,13 +92,12 @@ function operate(operator, a, b) {
   switch (operator) {
     case '+':
       return add(a, b)
-    case '−':
+    case '-':
       return substract(a, b)
-    case '×':
+    case '*':
       return multiply(a, b)
-    case '÷':
-      if (b === 0) return null
-      else return divide(a, b)
+    case '/':
+      return divide(a, b)
     default:
       return null
   }
